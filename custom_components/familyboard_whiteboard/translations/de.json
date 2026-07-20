@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Familyboard Whiteboard einrichten",
+        "data": {
+          "title": "Name des Boards"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Dieses Board ist bereits konfiguriert."
+    }
+  },
+  "services": {
+    "clear_board": {
+      "name": "Whiteboard leeren",
+      "description": "Löscht alle Striche und Text-Notizen von einem Whiteboard."
+    }
+  }
+}

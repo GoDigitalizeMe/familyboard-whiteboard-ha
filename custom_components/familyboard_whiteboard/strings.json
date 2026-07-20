@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Familyboard Whiteboard",
+        "data": {
+          "title": "Board name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This board is already configured."
+    }
+  },
+  "services": {
+    "clear_board": {
+      "name": "Clear board",
+      "description": "Deletes all strokes and text notes from a whiteboard."
+    }
+  }
+}

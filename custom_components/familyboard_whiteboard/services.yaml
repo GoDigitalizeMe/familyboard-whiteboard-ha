@@ -1,0 +1,6 @@
+clear_board:
+  name: Whiteboard leeren
+  description: Löscht alle Striche und Text-Notizen von einem Whiteboard.
+  target:
+    entity:
+      integration: familyboard_whiteboard
