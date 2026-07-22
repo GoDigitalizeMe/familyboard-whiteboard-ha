@@ -11,6 +11,34 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 
+# Any authenticated HA user (not just an admin) can reach save_board, and
+# the card renders color/text fields straight into the DOM. Without these
+# limits a malicious or compromised client could store data crafted to
+# break out of an HTML attribute in the card (stored XSS) or bloat the
+# board's storage file indefinitely.
+_HEX_COLOR = vol.Match(r"^#[0-9a-fA-F]{6}$")
+_UNIT_FLOAT = vol.All(vol.Coerce(float), vol.Range(min=-1, max=2))
+_POINT_SCHEMA = vol.All([_UNIT_FLOAT], vol.Length(min=1, max=2))
+
+_STROKE_SCHEMA = vol.Schema(
+    {
+        vol.Required("tool"): vol.In(["pen", "eraser"]),
+        vol.Required("color"): vol.All(str, _HEX_COLOR),
+        vol.Required("width"): vol.All(vol.Coerce(float), vol.Range(min=0.5, max=300)),
+        vol.Required("points"): vol.All([_POINT_SCHEMA], vol.Length(max=5000)),
+    }
+)
+
+_NOTE_SCHEMA = vol.Schema(
+    {
+        vol.Required("id"): vol.All(str, vol.Length(max=64)),
+        vol.Required("text"): vol.All(str, vol.Length(max=2000)),
+        vol.Required("x"): _UNIT_FLOAT,
+        vol.Required("y"): _UNIT_FLOAT,
+        vol.Required("color"): vol.All(str, _HEX_COLOR),
+    }
+)
+
 
 @websocket_api.websocket_command(
     {
@@ -31,8 +59,8 @@ async def ws_get_board(hass: HomeAssistant, connection, msg) -> None:
     {
         vol.Required("type"): "familyboard_whiteboard/save_board",
         vol.Required("config_entry_id"): str,
-        vol.Required("strokes"): list,
-        vol.Required("notes"): list,
+        vol.Required("strokes"): vol.All([_STROKE_SCHEMA], vol.Length(max=5000)),
+        vol.Required("notes"): vol.All([_NOTE_SCHEMA], vol.Length(max=200)),
     }
 )
 @websocket_api.async_response
